@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+argparse = "*"
+mlflow = "==2.5.0"
+prefect = "==2.0b5"
+hyperopt = "*"
+sklearn = "*"
+pandas = "*"
+datetime = "*"
+numpy = "*"
+black = "*"
+pre-commit = "*"
+hydra-core = "*"
+omegaconf = "*"
+seaborn = "*"
+pydantic = "==1.10.12"
+loguru = "*"
+
+[dev-packages]
+pytest = "*"
+pylint = "*"
+black = "*"
+isort = "*"
+ipykernel = "*"
+
+[requires]
+python_version = "3.10.6"

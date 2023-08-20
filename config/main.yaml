@@ -1,0 +1,8 @@
+data:
+  raw: data/raw/spam.csv
+  preprocessed: data/preprocessed
+  model: data/model
+  
+model:
+  target: Spam
+  experiment_name: Spam Detection Experimenting Training
