@@ -46,7 +46,6 @@ This is the final project for the course mlops-zoomcamp from [DataTalksClub](htt
     ```bash
     docker build -f DockerFile -t spam_detector .
     docker run -p 8001:8001 spam_detector
-
 * You can now access the following URL to the the predictions
     http://localhost:8001/predict?email="add your email here to test it"
 
@@ -59,3 +58,8 @@ This is the final project for the course mlops-zoomcamp from [DataTalksClub](htt
     ```bash
     python3 src/etl/monitoring.py
 * Report is available on directory /data/report
+
+
+**Other consideration**
+    Unit tests: Unit tests are provided using pytest
+    Code formatter: used black for consistent code style
