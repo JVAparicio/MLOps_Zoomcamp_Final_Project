@@ -61,5 +61,6 @@ This is the final project for the course mlops-zoomcamp from [DataTalksClub](htt
 
 
 **Other consideration**
+
     Unit tests: Unit tests are provided using pytest
     Code formatter: used black for consistent code style
