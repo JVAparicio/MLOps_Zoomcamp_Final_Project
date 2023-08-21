@@ -1,8 +1,11 @@
 data:
-  raw: data/raw/spam.csv
-  preprocessed: data/preprocessed
+  current: data/monitoring
   model: data/model
-  
+  preprocessed: data/preprocessed
+  raw: data/raw/spam.csv
 model:
-  target: Spam
+  best_model_run_id: fcd090e00d224e668e3044418b68dd57
   experiment_name: Spam Detection Experimenting Training
+  target: Spam
+monitoring:
+  report: data/report

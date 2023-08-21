@@ -16,7 +16,11 @@ from loguru import logger
 import mlflow
 import pandas as pd
 import os
-import pickle
+import sys
+
+CWD = os.getcwd()
+os.chdir(CWD)
+sys.path.append(CWD)
 
 from src.etl.helper import load_config, dump_pickle
 
@@ -115,7 +119,8 @@ def run_model_experimenting(config) -> None:
 
             run_metrics(y_val, y_pred)
             mlflow.log_param("model_name", f"{model}" )
-            mlflow.sklearn.log_model(model_pipeline, artifact_path=f"model_{i}")
+            #mlflow.sklearn.log_model(model_pipeline, artifact_path=f"model_{i}")
+            mlflow.sklearn.log_model(model_pipeline, artifact_path="model")
 
             print(f"default artifacts URI: '{mlflow.get_artifact_uri()}'")
             #log_model(model_pipeline, model_name)

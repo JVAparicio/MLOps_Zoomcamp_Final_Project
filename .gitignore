@@ -161,9 +161,10 @@ cython_debug/
 
 data/model/
 data/preprocessed
-Notebooks/
 steps.md
 Pipfile.lock
 mlruns/
 mlartifacts/
 mlflow.db
+deployment/model.pkl
+data/report/test_drift_report.html

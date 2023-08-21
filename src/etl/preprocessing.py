@@ -4,16 +4,17 @@ import sys
 
 import pandas as pd
 
-from src.etl.helper import load_config
-
-from loguru import logger
-from prefect import flow, task
 
 # Define entry point for paths
 CWD = os.getcwd()
 os.chdir(CWD)
 sys.path.append(CWD)
 
+
+from src.etl.helper import load_config
+
+from loguru import logger
+from prefect import flow, task
 
 
 @task(name="Read data")

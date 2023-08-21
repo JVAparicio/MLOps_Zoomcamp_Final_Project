@@ -2,20 +2,28 @@ import mlflow
 from loguru import logger
 from fastapi import FastAPI
 import numpy as np
+import os
+import sys
+
+CWD = os.getcwd()
+os.chdir(CWD)
+sys.path.append(CWD)
 
 
-#mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
+
+from src.etl.helper import load_config
+#from helper import load_config
+
+config = load_config()
 
 
-RUN_ID = "e490ff72fbd1497e824a714ee545315f"
+RUN_ID = config.model.best_model_run_id
 
 
 logged_model = f"./mlartifacts/1/{RUN_ID}/artifacts/model_3/"
 ## Load model as a PyFuncModel.
 loaded_model = mlflow.pyfunc.load_model(logged_model)
-
-
-#print(loaded_model.predict([emails]))
 
 
 app = FastAPI()
@@ -36,13 +44,11 @@ async def predict(email: str):
     else:
         prediction = 'Spam'
 
-     
-    # have to convert to int because numpy is not supported by fastapi : https://github.com/tiangolo/fastapi/issues/2293
+    
     return {'prediction': prediction, 'model_version': RUN_ID}
 
 
 if __name__ == "__main__":
-    # Use this for debugging perpuses
 
     logger.debug("Running in developement mode. Do not run like this in production")
     import uvicorn

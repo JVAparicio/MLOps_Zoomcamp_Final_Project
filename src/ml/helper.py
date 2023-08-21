@@ -6,7 +6,7 @@ import pickle
 
 
 def load_config() -> DictConfig:
-    with initialize(version_base=None, config_path="./config"):
+    with initialize(version_base=None, config_path="./../../config"):
         config = compose(config_name="main")
     return config
 
