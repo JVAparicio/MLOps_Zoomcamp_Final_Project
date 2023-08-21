@@ -13,7 +13,8 @@ sys.path.append(CWD)
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
 from src.etl.helper import load_config
-#from helper import load_config
+
+# from helper import load_config
 
 config = load_config()
 
@@ -29,10 +30,9 @@ loaded_model = mlflow.pyfunc.load_model(logged_model)
 app = FastAPI()
 
 
-#def predict(features):
+# def predict(features):
 #    preds = loaded_model.predict(features)
 #    return preds
-
 
 
 @app.get("/predict")
@@ -40,20 +40,15 @@ async def predict(email: str):
     pred = loaded_model.predict([email])
 
     if pred == [0]:
-        prediction = 'Not Spam'
+        prediction = "Not Spam"
     else:
-        prediction = 'Spam'
+        prediction = "Spam"
 
-    
-    return {'prediction': prediction, 'model_version': RUN_ID}
+    return {"prediction": prediction, "model_version": RUN_ID}
 
 
 if __name__ == "__main__":
-
     logger.debug("Running in developement mode. Do not run like this in production")
     import uvicorn
 
     uvicorn.run(app, host="localhost", port=8001, log_level="debug")
-
-
-

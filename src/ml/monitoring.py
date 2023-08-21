@@ -35,18 +35,15 @@ def run_monitoring(config) -> None:
     """
     logger.info("Starting Monitoring procedure.")
 
-
     # Unpack config file
     reference_data = config.data.preprocessed
     current_data = config.data.current
-    #model_run_path = config.inference.model_run_path
-    #categorical_features = config["preprocessing"]["cat_variables"]
+    # model_run_path = config.inference.model_run_path
+    # categorical_features = config["preprocessing"]["cat_variables"]
 
-
-    #2. Read reference and current data
+    # 2. Read reference and current data
     reference_df = pd.read_csv(reference_data + "/train_df.csv")
     current_df = pd.read_csv(current_data + "/monitor_df.csv")
-
 
     # 3. Load model
     RUN_ID = config.model.best_model_run_id
@@ -58,7 +55,6 @@ def run_monitoring(config) -> None:
     # 4. Predict on current and reference data
     reference_pred = model.predict(reference_df["Message"])
     current_pred = model.predict(current_df["Message"])
-    
 
     current_df["prediction"] = current_pred
     reference_df["prediction"] = reference_pred
@@ -68,16 +64,16 @@ def run_monitoring(config) -> None:
 
     column_mapping.target = "spam"
     column_mapping.prediction = "prediction"
-    #column_mapping.categorical_features = categorical_features
+    # column_mapping.categorical_features = categorical_features
 
     ## Create regression report of model performance
-    #logger.info("Get the regression report.")
-    #regression_report = Report(metrics=[RegressionPreset()])
-    #regression_report.run(
+    # logger.info("Get the regression report.")
+    # regression_report = Report(metrics=[RegressionPreset()])
+    # regression_report.run(
     #    reference_data=reference_df,
     #    current_data=current_df,
     #    column_mapping=column_mapping,
-    #)
+    # )
 
     # Create data drift report
     logger.info("Get the drift report.")
@@ -90,11 +86,10 @@ def run_monitoring(config) -> None:
     logger.info("Saving reports...")
 
     report_path = config.monitoring.report
-    #regression_report.save_html("./workspace/test_suite.html")
+    # regression_report.save_html("./workspace/test_suite.html")
     drift_report.save_html(report_path + "/test_drift_report.html")
 
     logger.info("Monitoring procedure finished.")
-
 
 
 if __name__ == "__main__":

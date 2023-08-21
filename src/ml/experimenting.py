@@ -26,21 +26,24 @@ from src.etl.helper import load_config, dump_pickle
 
 
 # Define mlflow parameters for tracking
-#mlflow.set_tracking_uri("sqlite:///mlflow.db")
+# mlflow.set_tracking_uri("sqlite:///mlflow.db")
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
 
 @task(name="Read data")
 def read_data(data_path):
-    data=pd.read_csv(data_path)
+    data = pd.read_csv(data_path)
 
     return data
 
 
 @task(retries=3, retry_delay_seconds=2, name="Splitting into train and validation sets")
 def create_train_and_validation_sets(
-    df: pd.DataFrame, model_data_path, target: str = "Spam", save=True, 
+    df: pd.DataFrame,
+    model_data_path,
+    target: str = "Spam",
+    save=True,
 ) -> pd.DataFrame:
     logger.info("create_train_and_validation_sets")
 
@@ -54,7 +57,9 @@ def create_train_and_validation_sets(
 
     # Save training and validation sets
     if save:
-        logger.info(f"Saving training and validation datasets to path: {model_data_path}")
+        logger.info(
+            f"Saving training and validation datasets to path: {model_data_path}"
+        )
 
         # Saving files
         os.makedirs(model_data_path, exist_ok=True)
@@ -65,7 +70,7 @@ def create_train_and_validation_sets(
     return X_train, X_val, y_train, y_val
 
 
-@task(name ="Calculate and store metrics ")
+@task(name="Calculate and store metrics ")
 def run_metrics(y_val, y_pred):
     accuracy = accuracy_score(y_val, y_pred)
     precision = precision_score(y_val, y_pred)
@@ -79,14 +84,13 @@ def run_metrics(y_val, y_pred):
     mlflow.log_metric("f1", f1)
 
 
-@task(name ="Log model")
+@task(name="Log model")
 def log_model(model, model_name):
     mlflow.sklearn.log_model(model, model_name)
 
 
 @flow(name="Experimenting Tracking Flow")
 def run_model_experimenting(config) -> None:
-
     EXPERIMENT_NAME = config.model.experiment_name
 
     mlflow.set_experiment(EXPERIMENT_NAME)
@@ -97,37 +101,42 @@ def run_model_experimenting(config) -> None:
     # Create training and validation datasets for the hyperparameter tuning
 
     model_data_path = config.data.model
-    X_train, X_val, y_train, y_val = create_train_and_validation_sets(train_df, model_data_path).result()
+    X_train, X_val, y_train, y_val = create_train_and_validation_sets(
+        train_df, model_data_path
+    ).result()
 
     estimator = DecisionTreeClassifier(max_depth=1)
 
-    model_pool = {1: MultinomialNB(), 2:RandomForestClassifier(),3:AdaBoostClassifier(estimator=estimator, n_estimators=50)}
+    model_pool = {
+        1: MultinomialNB(),
+        2: RandomForestClassifier(),
+        3: AdaBoostClassifier(estimator=estimator, n_estimators=50),
+    }
 
+    # mlflow.sklearn.autolog()
 
-    #mlflow.sklearn.autolog()
-   
     for i, model in model_pool.items():
-
         with mlflow.start_run():
             logger.info(f"Run {i} experiment")
 
-            model_pipeline=Pipeline([('vectorizer',CountVectorizer()),('nb',model)])
+            model_pipeline = Pipeline(
+                [("vectorizer", CountVectorizer()), ("nb", model)]
+            )
 
-            model_pipeline.fit(X_train,y_train)
+            model_pipeline.fit(X_train, y_train)
 
             y_pred = model_pipeline.predict(X_val)
 
             run_metrics(y_val, y_pred)
-            mlflow.log_param("model_name", f"{model}" )
-            #mlflow.sklearn.log_model(model_pipeline, artifact_path=f"model_{i}")
+            mlflow.log_param("model_name", f"{model}")
+            # mlflow.sklearn.log_model(model_pipeline, artifact_path=f"model_{i}")
             mlflow.sklearn.log_model(model_pipeline, artifact_path="model")
 
             print(f"default artifacts URI: '{mlflow.get_artifact_uri()}'")
-            #log_model(model_pipeline, model_name)
-            #mlflow.log_artifact("model", model)
+            # log_model(model_pipeline, model_name)
+            # mlflow.log_artifact("model", model)
+
 
 if __name__ == "__main__":
     config = load_config()
     run_model_experimenting(config)
-
-
